@@ -1,0 +1,73 @@
+body {
+	margin: 0;
+	background-color: #e6e6e6;
+	color: #262626;
+    font-family: 'Abel', sans-serif;
+
+}
+
+header {
+	text-align:center;
+	margin-top:2%;
+}
+
+h1 {
+	padding: 5px 0 10px 0;
+	font-size:48px;
+	font-weight: 700;
+}
+
+p {
+	font-size:24px;
+	line-height: 1;
+}
+
+.board {
+	 width: 900px;
+	 text-align: center;
+	 margin-left: auto;
+	margin-right: auto;
+}
+
+.card {
+	width: 150px;
+	height: 150px;
+	display:inline-block;
+	margin: 3px;
+	cursor: pointer;
+	background-image: url("images/card.jpg");
+	border: 2px solid black;
+	filter: brightness(70%);
+	transition: all .5s easy-in-out;
+}
+
+.card:hover {
+	border-color: #ffffb3;
+	filter: brightness(100%);
+}
+
+.cardA {
+	width: 150px;
+	height: 150px;
+	display:inline-block;
+	margin: 3px;
+	background-image: url("images/card.jpg");
+	border: 2px solid  #ffffb3;
+	filter: brightness(100%);
+	transition: all .5s easy-in-out;
+	cursor: default;
+}
+
+.score {
+	font-size: 24px;
+	font-weight: 700;
+	letter-space: 2px;
+}
+
+
+
+
+a:link    { color: #209781; text-decoration: none; }
+a:visited { color: #209781; }
+a:active  { color: #209781; }
+a:hover   { color: #E9B64A; }
