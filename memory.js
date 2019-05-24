@@ -1,141 +1,134 @@
-var cards = ["card1.jpg", "card10.jpg", "card3.jpg", "card4.jpg", "card6.jpg",
-"card6.jpg", "card7.jpg", "card8.jpg", "card1.jpg", "card10.jpg",
-"card9.jpg", "card2.jpg", "card3.jpg", "card4.jpg", "card5.jpg",
-"card5.jpg", "card7.jpg", "card8.jpg", "card9.jpg", "card2.jpg"];
-
-var c0 = document.getElementById('c0');
-var c1 = document.getElementById('c1');
-var c2 = document.getElementById('c2');
-var c3 = document.getElementById('c3');
-
-var c4 = document.getElementById('c4');
-var c5 = document.getElementById('c5');
-var c6 = document.getElementById('c6');
-var c7 = document.getElementById('c7');
-
-var c8 = document.getElementById('c8');
-var c9 = document.getElementById('c9');
-var c10 = document.getElementById('c10');
-var c11 = document.getElementById('c11');
-
-var c12 = document.getElementById('c12');
-var c13 = document.getElementById('c13');
-var c14 = document.getElementById('c14');
-var c15 = document.getElementById('c15');
-
-var c16 = document.getElementById('c16');
-var c17 = document.getElementById('c17');
-var c18 = document.getElementById('c18');
-var c19 = document.getElementById('c19');
-
-c0.addEventListener("click", function() { revealCard(0); } );
-c1.addEventListener("click", function() { revealCard(1); });
-c2.addEventListener("click", function() { revealCard(2); });
-c3.addEventListener("click", function() { revealCard(3); });
-
-c4.addEventListener("click", function() { revealCard(4); });
-c5.addEventListener("click", function() { revealCard(5); });
-c6.addEventListener("click", function() { revealCard(6); });
-c7.addEventListener("click", function() { revealCard(7); });
-
-c8.addEventListener("click", function() { revealCard(8); });
-c9.addEventListener("click", function() { revealCard(9); });
-c10.addEventListener("click", function() { revealCard(10); });
-c11.addEventListener("click", function() { revealCard(11); });
-
-c12.addEventListener("click", function() { revealCard(12); });
-c13.addEventListener("click", function() { revealCard(13); });
-c14.addEventListener("click", function() { revealCard(14); });
-c15.addEventListener("click", function() { revealCard(15); });
-
-c16.addEventListener("click", function() { revealCard(16); });
-c17.addEventListener("click", function() { revealCard(17); });
-c18.addEventListener("click", function() { revealCard(18); });
-c19.addEventListener("click", function() { revealCard(19); });
-
-var oneVisible = false;
-var turnCounter = 0;
-var visible_nr;
-var lock = false;
-var pairsLeft = 10;
-
-function revealCard(nr) {
+$(function(){
+	var allCards = [];
+	var oneVisible = false;
+	var turnCounter = 0;
+	var firstCard = null;
+	var firstNumber = undefined;
+	var lock = false;
+	var pairsLeft =  10;
 	
-	var opacityValue = $('#c'+nr).css('opacity');
+	$('#start').on('click', startGame);
 	
-	if (opacityValue != 0 && lock == false){
+	function startGame(){
+		getBoard();
+		prepareCards();
+		catchBoard();
+	}
+	
+	function getBoard() {
+		var startHTML = '';
+		for(i = 0; i < 20; i++) {
+			startHTML += '<div class="card" id="c'+i+'"></div> ';
+		}
+
+		startHTML+='<div class="score">Turn counter: 0</div>';
+		startHTML+='<a class="link_border" href="index.html">Return</a>';
+		$('.board').html(startHTML);	
+	} 
 		
-		lock = true;
-	
-		 var picture = "url(images/" + cards[nr] + ")";
-		 console.log(picture);
-		 
-		 $('#c'+nr).css('background-image', picture);
-		 $('#c'+nr).toggleClass( 'cardA' );
-		 
-		 if(oneVisible == false){
-			 
-			 //firstCard
-			 oneVisible = true;
-			 visible_nr = nr;
-			 lock = false;
-			 
-			}
-		else {
-			
-			//secondCard
-			
-			if(cards[visible_nr] == cards[nr]) {
-				
-				setTimeout(function() { hide2Cards(nr, visible_nr) }, 750);
-				
-			}
-			else {
-				
-				setTimeout(function() { restore2Cards(nr, visible_nr) }, 1000);
-			}
-			
-			turnCounter++;
-			$('.score').html('Turn counter: ' + turnCounter);
-			oneVisible = false;
+	function prepareCards(){	
+		var cards = [];
+		for(var i = 0; i < 10; i++) {
+			var name = 'card'+(i+1)+'.png';
+			cards[i*2] = name;
+			cards[i*2+1] = name;
+		}
+
+		var maxIndex = 19;
+
+		for(var c = 0; c<cards.length; c++) {
+			var index = Math.floor(Math.random() * maxIndex);
+			allCards[c] = cards[index];
+			cards[index] = cards[maxIndex];
+			maxIndex--;	
 		}
 	}
-}
-
-
-function hide2Cards(nr1, nr2)
-{
-	$('#c'+nr1).css('opacity', '0');
-	$('#c'+nr2).css('opacity', '0');
 	
-	pairsLeft--;
 	
-	if(pairsLeft == 0)
-	{
-		$('.board').html('<h1>You win!<br>Done in '+turnCounter+' turns</h1>');
+	function catchBoard() {	
+		$('.board').on('click', function(e) { revealCard(e); } );
 	}
+
+	function revealCard(e) {
+		if(!$(e.target).hasClass('card')) {
+			return;
+		}
+
+		if(lock) {
+			return;
+		}
+
+		lock = true;
+		$el = $(e.target);
+		var opacityValue = $el.css('opacity');
+		var nr = e.target.id.substring(1);
+		var picture = 'url(images/' + allCards[nr] + ')';
+		$el.css('background-image', picture);
+		$el.toggleClass( 'cardA' );
+
+		if(oneVisible == false) {
+			oneVisible = true;
+			firstCard = $el;
+			firstNumber = nr;
+			lock = false;
+		} else {
+			check2cards(firstNumber, nr, firstCard, $el);
+		}
+	}
+
+	function check2cards(nr1, nr2, $card1, $card2) {
+		if(nr1 == nr2) {
+			lock = false;
+			return;
+		} else if(allCards[nr1] == allCards[nr2] ) {
+			setTimeout(function() { hideCards($card1, $card2) }, 750);
+		} else {
+			setTimeout(function() { restoreCards($card1, $card2) }, 1000);
+		}			
+
+		turnCounter++;
+		$('.score').html('Turn counter: ' + turnCounter);
+		oneVisible = false;
+	}
+
+	function hideCards($card1, $card2) {
+		$card1.css('opacity', '0');
+		$card1.off('click');
+		$card2.css('opacity', '0');
+		$card2.off('click');
+
+		pairsLeft--;
+
+		if(pairsLeft == 0) 
+		{
+			win();
+		}
+
+		lock = false;
+	}
+
+	function restoreCards($card1, $card2) {
+		$card1.css('background-image', 'url(images/card.png)');
+		$card1.toggleClass( 'cardA' );
+
+		$card2.css('background-image', 'url(images/card.png)');
+		$card2.toggleClass( 'cardA' );
+		lock = false;
+	}
+
+	function win() {	
 	
-	lock = false;
-	
-}
+			if(turnCounter <= 20) {
+				var text ='<h1>You are the best!<br>Done in '+turnCounter+' turns</h1>';
+			} else if(turnCounter <= 30) {
+				var text ='<h1>Not bad!<br>Done in '+turnCounter+' turns</h1>';
+			} else {
+				var text ='<h1>Try again, youre sorce is bad!<br>Done in '+turnCounter+' turns</h1>';
+			}
+		var restartHTML = '<button class="button" id="restart">Restart</button>';
+		$('.board').html(text);
+		$('#record').html(restartHTML);
+		$('#restart').on('click', startGame);
+	}
 
-function restore2Cards(nr1, nr2)
-{
-	$('#c'+nr1).css('background-image', 'url(images/card.jpg)');
-	$('#c'+nr1).addClass('card');
-	$('#c'+nr1).removeClass('cardA');	
-
-	$('#c'+nr2).css('background-image', 'url(images/card.jpg)');
-	$('#c'+nr2).addClass('card');
-	$('#c'+nr2).removeClass('cardA');
-	
-	lock = false;
-}
-
-
-
-
-
-
-
-
+}); 

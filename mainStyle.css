@@ -35,7 +35,7 @@ p {
 	display:inline-block;
 	margin: 3px;
 	cursor: pointer;
-	background-image: url("images/card.jpg");
+	background-image: url("images/card.png");
 	border: 2px solid black;
 	filter: brightness(70%);
 	transition: all .5s easy-in-out;
@@ -51,7 +51,7 @@ p {
 	height: 150px;
 	display:inline-block;
 	margin: 3px;
-	background-image: url("images/card.jpg");
+	background-image: url("images/card.png");
 	border: 2px solid  #ffffb3;
 	filter: brightness(100%);
 	transition: all .5s easy-in-out;
@@ -64,10 +64,10 @@ p {
 	letter-space: 2px;
 }
 
+#record {
+	 width: 900px;
+	 text-align: center;
+	 margin-left: auto;
+	 margin-right: auto;
+}
 
-
-
-a:link    { color: #209781; text-decoration: none; }
-a:visited { color: #209781; }
-a:active  { color: #209781; }
-a:hover   { color: #E9B64A; }
